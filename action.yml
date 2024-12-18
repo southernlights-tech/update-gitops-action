@@ -29,6 +29,7 @@ runs:
     with:
       repository: ${{ inputs.gitops-repo }}
       ssh-key: ${{ inputs.ssh-key }}
+      ref: $${{ inputs.gitops-repo-branch}}
       path: gitops
   - uses: fjogeleit/yaml-update-action@main
     with:
