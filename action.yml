@@ -33,7 +33,7 @@ runs:
       path: gitops
   - uses: fjogeleit/yaml-update-action@main
     with:
-      branch: main 
+      branch: ${{ git.gitops-repo-branch }}
       targetBranch: ${{ inputs.gitops-repo-branch }} 
       repository: ${{ inputs.gitops-repo }}
       createPR: false
@@ -41,11 +41,11 @@ runs:
       message: "Repo ${{ github.event.repository.name }} published ${{ github.event.head_commit.message || github.event.release.tag_name }} by ${{ github.actor.login }}"
       workDir: gitops
       changes: ${{ inputs.changes-by-file }}
-  - name: Push changes
-    shell: bash
-    run: |
-      cd gitops
-      git config --global user.email "${{ inputs.commit-email }}"
-      git config --global user.name "${{ inputs.commit-name }}"
-      git commit -am "${{ github.event.head_commit.message }}"
-      git push
+      #- name: Push changes
+      #  shell: bash
+      #  run: |
+      #    cd gitops
+      #    git config --global user.email "${{ inputs.commit-email }}"
+      #    git config --global user.name "${{ inputs.commit-name }}"
+      #    git commit -am "${{ github.event.head_commit.message }}"
+      #    git push
