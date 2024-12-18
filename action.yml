@@ -33,7 +33,7 @@ runs:
       path: gitops
   - uses: fjogeleit/yaml-update-action@main
     with:
-      branch: ${{ git.gitops-repo-branch }}
+      branch: ${{ inputs.gitops-repo-branch }}
       targetBranch: ${{ inputs.gitops-repo-branch }} 
       repository: ${{ inputs.gitops-repo }}
       createPR: false
