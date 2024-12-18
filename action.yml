@@ -10,7 +10,7 @@ inputs:
   gitops-repo-branch:
     description: 'GitOps repo branch to update'
     required: true
-    default: 'master'
+    default: 'main'
   changes-by-file:
     description: 'JSON object with changes to make, by file as key'
     required: true
@@ -32,8 +32,8 @@ runs:
       path: gitops
   - uses: fjogeleit/yaml-update-action@main
     with:
-      branch: master
-      targetBranch: master
+      branch: main 
+      targetBranch: ${{ inputs.gitops-repo-branch }} 
       repository: ${{ inputs.gitops-repo }}
       createPR: false
       commitChange: false
