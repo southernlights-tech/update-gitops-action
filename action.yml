@@ -25,7 +25,7 @@ runs:
   using: "composite"
   steps:
   - name: Checkout GitOps Repository
-    uses: actions/checkout@v3
+    uses: actions/checkout@v4
     with:
       repository: ${{ inputs.gitops-repo }}
       ssh-key: ${{ inputs.ssh-key }}
