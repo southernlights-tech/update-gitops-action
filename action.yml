@@ -45,7 +45,7 @@ runs:
       path: gitops
   - uses: fjogeleit/yaml-update-action@main
     with:
-      branch: ${{ inputs.gitops-repo-branch }}
+      branch: "gitops-${{ github.sha }}"
       repository: ${{ inputs.gitops-repo }}
       commitChange: true 
       createPR: true 
@@ -57,7 +57,7 @@ runs:
       value: ${{ inputs.value }}
       masterBranchName: main
       token: ${{ inputs.token }}
-      targetBranch: "gitops-${{ github.sha }}"
+      targetBranch: ${{ inputs.gitops-repo-branch }}
       #changes: ${{ inputs.changes-by-file }}
       #  - name: Push changes
       #    shell: bash
