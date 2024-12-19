@@ -58,6 +58,7 @@ runs:
       value: ${{ inputs.value }}
       masterBranchName: main
       token: ${{ inputs.token }}
+      targetBranch: "gitops-${{ github.sha }}"
       #changes: ${{ inputs.changes-by-file }}
       #  - name: Push changes
       #    shell: bash
