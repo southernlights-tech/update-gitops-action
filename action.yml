@@ -46,7 +46,6 @@ runs:
   - uses: fjogeleit/yaml-update-action@main
     with:
       branch: ${{ inputs.gitops-repo-branch }}
-      targetBranch: ${{ inputs.gitops-repo-branch }} 
       repository: ${{ inputs.gitops-repo }}
       commitChange: true 
       createPR: true 
