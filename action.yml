@@ -57,7 +57,7 @@ runs:
       propertyPath: ${{ inputs.propertyPath }}
       value: ${{ inputs.value }}
       masterBranchName: main
-      token: ${{ input.token }}
+      token: ${{ inputs.token }}
       #changes: ${{ inputs.changes-by-file }}
       #  - name: Push changes
       #    shell: bash
