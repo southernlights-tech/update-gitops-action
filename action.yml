@@ -29,6 +29,9 @@ inputs:
   commit-name:
     description: 'Name to use for the commit'
     required: true
+  token:
+    required: false
+    description: 'GitHub AuthToken for PR'
 
 runs:
   using: "composite"
@@ -53,6 +56,8 @@ runs:
       valueFile: ${{ inputs.valueFile }}
       propertyPath: ${{ inputs.propertyPath }}
       value: ${{ inputs.value }}
+      masterBranchName: main
+      token: ${{ input.token }}
       #changes: ${{ inputs.changes-by-file }}
       #  - name: Push changes
       #    shell: bash
