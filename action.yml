@@ -46,7 +46,7 @@ runs:
       targetBranch: ${{ inputs.gitops-repo-branch }} 
       repository: ${{ inputs.gitops-repo }}
       createPR: true 
-      commitChange: false
+      commitChange: true 
       format: YAML
       message: "Repo ${{ github.event.repository.name }} published ${{ github.event.head_commit.message || github.event.release.tag_name }} by ${{ github.actor.login }}"
       workDir: gitops
@@ -54,11 +54,11 @@ runs:
       propertyPath: ${{ inputs.propertyPath }}
       value: ${{ inputs.value }}
       #changes: ${{ inputs.changes-by-file }}
-  - name: Push changes
-    shell: bash
-    run: |
-      cd gitops
-      git config --global user.email "${{ inputs.commit-email }}"
-      git config --global user.name "${{ inputs.commit-name }}"
-      git commit -am "${{ github.event.head_commit.message }}"
-      git push
+      #  - name: Push changes
+      #    shell: bash
+      #    run: |
+      #      cd gitops
+      #      git config --global user.email "${{ inputs.commit-email }}"
+      #      git config --global user.name "${{ inputs.commit-name }}"
+      #      git commit -am "${{ github.event.head_commit.message }}"
+      #      git push
