@@ -54,11 +54,11 @@ runs:
       propertyPath: ${{ inputs.propertyPath }}
       value: ${{ inputs.value }}
       #changes: ${{ inputs.changes-by-file }}
-      #- name: Push changes
-      #  shell: bash
-      #  run: |
-      #    cd gitops
-      #    git config --global user.email "${{ inputs.commit-email }}"
-      #    git config --global user.name "${{ inputs.commit-name }}"
-      #    git commit -am "${{ github.event.head_commit.message }}"
-      #    git push
+  - name: Push changes
+    shell: bash
+    run: |
+      cd gitops
+      git config --global user.email "${{ inputs.commit-email }}"
+      git config --global user.name "${{ inputs.commit-name }}"
+      git commit -am "${{ github.event.head_commit.message }}"
+      git push
