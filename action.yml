@@ -49,6 +49,7 @@ runs:
       repository: ${{ inputs.gitops-repo }}
       commitChange: true 
       commitUserEmail: ${{ inputs.commit-email }}
+      commitUserName: ${{ inputs.commit-name }}
       createPR: true 
       format: YAML
       message: "Repo ${{ github.event.repository.name }} published ${{ github.event.head_commit.message || github.event.release.tag_name }} by ${{ github.actor.login }}"
