@@ -17,6 +17,9 @@ inputs:
   valueFile: 
     description: 'Path to the values files' 
     required: false
+  value:
+    description: 'Value for the property to change'
+    required: false
   propertyPath: 
     description: 'Path inside the file to the property to patch'
     required: false
@@ -49,6 +52,7 @@ runs:
       workDir: gitops
       valueFile: ${{ inputs.valueFile }}
       propertyPath: ${{ inputs.propertyPath }}
+      value: ${{ inputs.value }}
       #changes: ${{ inputs.changes-by-file }}
       #- name: Push changes
       #  shell: bash
