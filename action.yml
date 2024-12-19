@@ -58,3 +58,5 @@ runs:
       masterBranchName: main
       token: ${{ inputs.token }}
       targetBranch: ${{ inputs.gitops-repo-branch }}
+      description: "This PR was created by GitOps automation."
+      message: "Update Image Tag to ${{ github.sha }}"
