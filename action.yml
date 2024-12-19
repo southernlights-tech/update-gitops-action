@@ -13,7 +13,13 @@ inputs:
     default: 'main'
   changes-by-file:
     description: 'JSON object with changes to make, by file as key'
-    required: true
+    required: false 
+  valueFile: 
+    description: 'Path to the values files' 
+    required: false
+  propertyPath: 
+    description: 'Path inside the file to the property to patch'
+    required: false
   commit-email:
     description: 'Email address to use for the commit'
     required: true
@@ -41,7 +47,9 @@ runs:
       format: YAML
       message: "Repo ${{ github.event.repository.name }} published ${{ github.event.head_commit.message || github.event.release.tag_name }} by ${{ github.actor.login }}"
       workDir: gitops
-      changes: ${{ inputs.changes-by-file }}
+      valueFile: ${{ inputs.valueFile }}
+      propertyPath: ${{ inputs.propertyPath }}
+      #changes: ${{ inputs.changes-by-file }}
       #- name: Push changes
       #  shell: bash
       #  run: |
