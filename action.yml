@@ -3,7 +3,7 @@ description: 'Used for updating a gitops repo with new image(s)'
 inputs:
   ssh-key:
     description: 'SSH key that has read/write access to the GitOps repo'
-    required: true
+    required: false 
   gitops-repo:
     description: 'GitOps repo to update'
     required: true
@@ -40,7 +40,7 @@ runs:
     uses: actions/checkout@v4
     with:
       repository: ${{ inputs.gitops-repo }}
-      ssh-key: ${{ inputs.ssh-key }}
+      token: ${{ inputs.token }}
       ref: ${{ inputs.gitops-repo-branch}}
       path: gitops
   - uses: fjogeleit/yaml-update-action@main
@@ -58,12 +58,3 @@ runs:
       masterBranchName: main
       token: ${{ inputs.token }}
       targetBranch: ${{ inputs.gitops-repo-branch }}
-      #changes: ${{ inputs.changes-by-file }}
-      #  - name: Push changes
-      #    shell: bash
-      #    run: |
-      #      cd gitops
-      #      git config --global user.email "${{ inputs.commit-email }}"
-      #      git config --global user.name "${{ inputs.commit-name }}"
-      #      git commit -am "${{ github.event.head_commit.message }}"
-      #      git push
