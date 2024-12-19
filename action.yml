@@ -43,7 +43,7 @@ runs:
       token: ${{ inputs.token }}
       ref: ${{ inputs.gitops-repo-branch}}
       path: gitops
-  - uses: fjogeleit/yaml-update-action@main
+  - uses: fjogeleit/yaml-update-action@v0.16.0
     with:
       branch: "gitops-${{ github.sha }}"
       repository: ${{ inputs.gitops-repo }}
