@@ -45,7 +45,7 @@ runs:
       branch: ${{ inputs.gitops-repo-branch }}
       targetBranch: ${{ inputs.gitops-repo-branch }} 
       repository: ${{ inputs.gitops-repo }}
-      createPR: false
+      createPR: true 
       commitChange: false
       format: YAML
       message: "Repo ${{ github.event.repository.name }} published ${{ github.event.head_commit.message || github.event.release.tag_name }} by ${{ github.actor.login }}"
