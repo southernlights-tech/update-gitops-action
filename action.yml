@@ -3,7 +3,7 @@ description: 'Used for updating a gitops repo with new image(s)'
 inputs:
   ssh-key:
     description: 'SSH key that has read/write access to the GitOps repo'
-    required: true
+    required: false 
   gitops-repo:
     description: 'GitOps repo to update'
     required: true
@@ -13,13 +13,25 @@ inputs:
     default: 'main'
   changes-by-file:
     description: 'JSON object with changes to make, by file as key'
-    required: true
+    required: false 
+  valueFile: 
+    description: 'Path to the values files' 
+    required: false
+  value:
+    description: 'Value for the property to change'
+    required: false
+  propertyPath: 
+    description: 'Path inside the file to the property to patch'
+    required: false
   commit-email:
     description: 'Email address to use for the commit'
     required: true
   commit-name:
     description: 'Name to use for the commit'
     required: true
+  token:
+    required: false
+    description: 'GitHub AuthToken for PR'
 
 runs:
   using: "composite"
@@ -28,24 +40,24 @@ runs:
     uses: actions/checkout@v4
     with:
       repository: ${{ inputs.gitops-repo }}
-      ssh-key: ${{ inputs.ssh-key }}
-      ref: $${{ inputs.gitops-repo-branch}}
+      token: ${{ inputs.token }}
+      ref: ${{ inputs.gitops-repo-branch}}
       path: gitops
-  - uses: fjogeleit/yaml-update-action@main
+  - uses: fjogeleit/yaml-update-action@v0.16.0
     with:
-      branch: main 
-      targetBranch: ${{ inputs.gitops-repo-branch }} 
+      branch: "gitops-${{ github.sha }}"
       repository: ${{ inputs.gitops-repo }}
-      createPR: false
-      commitChange: false
+      commitChange: true 
+      commitUserEmail: ${{ inputs.commit-email }}
+      commitUserName: ${{ inputs.commit-name }}
+      createPR: true 
+      format: YAML
       message: "Repo ${{ github.event.repository.name }} published ${{ github.event.head_commit.message || github.event.release.tag_name }} by ${{ github.actor.login }}"
       workDir: gitops
-      changes: ${{ inputs.changes-by-file }}
-  - name: Push changes
-    shell: bash
-    run: |
-      cd gitops
-      git config --global user.email "${{ inputs.commit-email }}"
-      git config --global user.name "${{ inputs.commit-name }}"
-      git commit -am "${{ github.event.head_commit.message }}"
-      git push
+      valueFile: ${{ inputs.valueFile }}
+      propertyPath: ${{ inputs.propertyPath }}
+      value: ${{ inputs.value }}
+      masterBranchName: main
+      token: ${{ inputs.token }}
+      targetBranch: ${{ inputs.gitops-repo-branch }}
+      description: "This PR was created by GitOps automation."
