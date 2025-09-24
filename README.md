@@ -17,7 +17,7 @@ A GitHub Action that automatically updates GitOps repositories with new applicat
 ```yaml
 steps:
 - name: Update GitOps Repository
-  uses: maderelevant/update-gitops-action@master
+  uses: southernlights-tech/update-gitops-action@main
   with:
     gitops-repo: your-org/app-gitops
     commit-email: "gitops@your-org.com"
