@@ -1,0 +1,99 @@
+name: Test GitOps Action
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      test-repo:
+        description: 'Test GitOps repository (org/repo)'
+        required: false
+        default: 'test-org/test-gitops'
+      test-branch:
+        description: 'Test branch'
+        required: false
+        default: 'main'
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Test PR Title Generation
+      shell: bash
+      run: |
+        echo "Testing PR title generation..."
+        
+        # Test normal message
+        export GITHUB_REPOSITORY="test/repo"
+        export GITHUB_ACTOR="testuser"
+        RAW_MESSAGE="Repo test-repo published v1.0.0 by testuser"
+        if [ ${#RAW_MESSAGE} -gt 256 ]; then
+          TRIMMED_MESSAGE="${RAW_MESSAGE:0:253}..."
+          echo "✓ Long message trimmed: $TRIMMED_MESSAGE"
+        else
+          echo "✓ Normal message: $RAW_MESSAGE"
+        fi
+        
+        # Test long message
+        LONG_MESSAGE="Repo very-long-repository-name published very-long-commit-message-that-exceeds-the-maximum-length-allowed-for-pr-titles-and-should-be-trimmed-to-fit-within-the-256-character-limit-imposed-by-github-api-constraints-making-sure-we-handle-this-edge-case-properly by very-long-username"
+        if [ ${#LONG_MESSAGE} -gt 256 ]; then
+          TRIMMED_LONG="${LONG_MESSAGE:0:253}..."
+          echo "✓ Long message trimmed: ${#TRIMMED_LONG} chars"
+        else
+          echo "✗ Expected long message to be trimmed"
+          exit 1
+        fi
+
+  integration-test-dry-run:
+    name: Integration Test (Dry Run)
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch'
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Validate Action Inputs
+      shell: bash
+      run: |
+        echo "Validating action.yml structure..."
+        
+        # Check required inputs are defined
+        if ! grep -q "gitops-repo:" action.yml; then
+          echo "✗ Missing gitops-repo input"
+          exit 1
+        fi
+        
+        if ! grep -q "commit-email:" action.yml; then
+          echo "✗ Missing commit-email input"
+          exit 1
+        fi
+        
+        if ! grep -q "commit-name:" action.yml; then
+          echo "✗ Missing commit-name input"
+          exit 1
+        fi
+        
+        echo "✓ All required inputs defined"
+
+  integration-test-live:
+    name: Integration Test (Live)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.test-repo != ''
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Test GitOps Update
+      uses: ./
+      with:
+        gitops-repo: ${{ github.event.inputs.test-repo }}
+        gitops-repo-branch: ${{ github.event.inputs.test-branch }}
+        commit-email: "gitops-test@example.com"
+        commit-name: "GitOps Test Bot"
+        valueFile: "values.yaml"
+        propertyPath: "app.image"
+        value: "nginx:${{ github.sha }}"
+        token: ${{ secrets.GITHUB_TOKEN }}

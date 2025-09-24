@@ -43,6 +43,17 @@ runs:
       token: ${{ inputs.token }}
       ref: ${{ inputs.gitops-repo-branch}}
       path: gitops
+  - name: Generate PR title
+    shell: bash
+    id: pr-title
+    run: |
+      RAW_MESSAGE="Repo ${{ github.event.repository.name }} published ${{ github.event.head_commit.message || github.event.release.tag_name }} by ${{ github.actor.login }}"
+      if [ ${#RAW_MESSAGE} -gt 256 ]; then
+        TRIMMED_MESSAGE="${RAW_MESSAGE:0:253}..."
+        echo "title=$TRIMMED_MESSAGE" >> $GITHUB_OUTPUT
+      else
+        echo "title=$RAW_MESSAGE" >> $GITHUB_OUTPUT
+      fi
   - uses: fjogeleit/yaml-update-action@v0.16.0
     with:
       branch: "gitops-${{ github.sha }}"
@@ -52,7 +63,7 @@ runs:
       commitUserName: ${{ inputs.commit-name }}
       createPR: true 
       format: YAML
-      message: "Repo ${{ github.event.repository.name }} published ${{ github.event.head_commit.message || github.event.release.tag_name }} by ${{ github.actor.login }}"
+      message: ${{ steps.pr-title.outputs.title }}
       workDir: gitops
       valueFile: ${{ inputs.valueFile }}
       propertyPath: ${{ inputs.propertyPath }}
