@@ -65,6 +65,7 @@ runs:
       format: YAML
       message: ${{ steps.pr-title.outputs.title }}
       workDir: gitops
+      changes: ${{ inputs.changes-by-file }}
       valueFile: ${{ inputs.valueFile }}
       propertyPath: ${{ inputs.propertyPath }}
       value: ${{ inputs.value }}
