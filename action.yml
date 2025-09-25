@@ -48,11 +48,13 @@ runs:
     id: pr-title
     run: |
       RAW_MESSAGE="Repo ${{ github.event.repository.name }} published ${{ github.event.head_commit.message || github.event.release.tag_name }} by ${{ github.actor.login }}"
-      if [ ${#RAW_MESSAGE} -gt 256 ]; then
-        TRIMMED_MESSAGE="${RAW_MESSAGE:0:253}..."
+      # Replace newlines with spaces to ensure valid GitHub Actions output format
+      CLEAN_MESSAGE=$(echo "$RAW_MESSAGE" | tr '\n' ' ' | tr -s ' ')
+      if [ ${#CLEAN_MESSAGE} -gt 256 ]; then
+        TRIMMED_MESSAGE="${CLEAN_MESSAGE:0:253}..."
         echo "title=$TRIMMED_MESSAGE" >> $GITHUB_OUTPUT
       else
-        echo "title=$RAW_MESSAGE" >> $GITHUB_OUTPUT
+        echo "title=$CLEAN_MESSAGE" >> $GITHUB_OUTPUT
       fi
   - uses: fjogeleit/yaml-update-action@v0.16.0
     with:
