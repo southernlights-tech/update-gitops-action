@@ -48,6 +48,18 @@ jobs:
           echo "✗ Expected long message to be trimmed"
           exit 1
         fi
+        
+        # Test newline sanitization
+        RAW_WITH_NEWLINES="Repo test-repo published fix: resolve issue
+        with multi-line commit message
+        that spans multiple lines by testuser"
+        CLEAN_MESSAGE=$(echo "$RAW_WITH_NEWLINES" | tr '\n' ' ' | tr -s ' ')
+        if [[ "$CLEAN_MESSAGE" == *$'\n'* ]]; then
+          echo "✗ Newlines not properly sanitized"
+          exit 1
+        else
+          echo "✓ Newlines sanitized: $CLEAN_MESSAGE"
+        fi
 
   integration-test-dry-run:
     name: Integration Test (Dry Run)

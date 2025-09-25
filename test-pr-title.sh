@@ -53,9 +53,35 @@ test_edge_case() {
     fi
 }
 
-# Test case 4: Simulate actual GitHub context
+# Test case 4: Message with newlines (new sanitization feature)
+test_newline_sanitization() {
+    echo "Test 4: Message with newlines sanitization"
+    
+    RAW_MESSAGE="Repo test-repo published fix: resolve issue
+with multi-line commit message
+that spans multiple lines by testuser"
+    
+    # Apply newline sanitization like in action.yml
+    CLEAN_MESSAGE=$(echo "$RAW_MESSAGE" | tr '\n' ' ' | tr -s ' ')
+    
+    if [ ${#CLEAN_MESSAGE} -gt 256 ]; then
+        TRIMMED_MESSAGE="${CLEAN_MESSAGE:0:253}..."
+        echo "✅ Newlines sanitized and trimmed: ${#TRIMMED_MESSAGE} chars"
+        echo "   Message: $TRIMMED_MESSAGE"
+    else
+        echo "✅ Newlines sanitized: $CLEAN_MESSAGE (${#CLEAN_MESSAGE} chars)"
+    fi
+    
+    # Verify no newlines remain
+    if [[ "$CLEAN_MESSAGE" == *$'\n'* ]]; then
+        echo "❌ Newlines still present in cleaned message"
+        return 1
+    fi
+}
+
+# Test case 5: Simulate actual GitHub context
 test_github_context() {
-    echo "Test 4: Simulated GitHub context"
+    echo "Test 5: Simulated GitHub context"
     
     # Simulate GitHub environment variables
     GITHUB_REPOSITORY_NAME="my-awesome-app"
@@ -82,6 +108,8 @@ echo ""
 test_long_message  
 echo ""
 test_edge_case
+echo ""
+test_newline_sanitization
 echo ""
 test_github_context
 
