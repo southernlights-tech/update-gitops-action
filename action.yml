@@ -47,7 +47,7 @@ runs:
     shell: bash
     id: pr-title
     run: |
-      RAW_MESSAGE="Repo ${{ github.event.repository.name }} published ${{ github.event.head_commit.message || github.event.release.tag_name }} by ${{ github.actor.login }}"
+      printf -v RAW_MESSAGE "Repo %s published %s by %s" "${{ github.event.repository.name }}" "${{ github.event.head_commit.message || github.event.release.tag_name }}" "${{ github.actor.login }}"
       # Replace newlines with spaces to ensure valid GitHub Actions output format
       CLEAN_MESSAGE=$(echo "$RAW_MESSAGE" | tr '\n' ' ' | tr -s ' ')
       if [ ${#CLEAN_MESSAGE} -gt 256 ]; then

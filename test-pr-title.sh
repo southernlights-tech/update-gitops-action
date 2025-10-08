@@ -99,6 +99,33 @@ test_github_context() {
     fi
 }
 
+# Test case 6: Message with special characters (parentheses, quotes)
+test_special_characters() {
+    echo "Test 6: Message with special characters (parentheses, quotes)"
+    
+    GITHUB_REPOSITORY_NAME="erp-integrations"
+    GITHUB_COMMIT_MESSAGE='Revert "refractor hdms to use config (#371)" (#372)'
+    GITHUB_ACTOR="developer"
+    
+    printf -v RAW_MESSAGE "Repo %s published %s by %s" "$GITHUB_REPOSITORY_NAME" "$GITHUB_COMMIT_MESSAGE" "$GITHUB_ACTOR"
+    CLEAN_MESSAGE=$(echo "$RAW_MESSAGE" | tr '\n' ' ' | tr -s ' ')
+    
+    if [ ${#CLEAN_MESSAGE} -gt 256 ]; then
+        TRIMMED_MESSAGE="${CLEAN_MESSAGE:0:253}..."
+        echo "✅ Special characters handled and trimmed: ${#TRIMMED_MESSAGE} chars"
+        echo "   Message: $TRIMMED_MESSAGE"
+    else
+        echo "✅ Special characters handled: $CLEAN_MESSAGE (${#CLEAN_MESSAGE} chars)"
+    fi
+    
+    if [[ "$CLEAN_MESSAGE" == *"Revert"* ]] && [[ "$CLEAN_MESSAGE" == *"#371"* ]]; then
+        echo "   ✓ Special characters preserved correctly"
+    else
+        echo "❌ Special characters not preserved correctly"
+        return 1
+    fi
+}
+
 # Run all tests
 echo "Starting PR title generation tests..."
 echo "=================================="
@@ -112,6 +139,8 @@ echo ""
 test_newline_sanitization
 echo ""
 test_github_context
+echo ""
+test_special_characters
 
 echo ""
 echo "🎉 All tests completed successfully!"
