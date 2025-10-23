@@ -58,7 +58,7 @@ runs:
       fi
   - uses: fjogeleit/yaml-update-action@v0.16.0
     with:
-      branch: "gitops-${{ github.sha }}"
+      branch: "gitops-${{ github.sha }}-${{ github.run_id }}"
       repository: ${{ inputs.gitops-repo }}
       commitChange: true 
       commitUserEmail: ${{ inputs.commit-email }}
