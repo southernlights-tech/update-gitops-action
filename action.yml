@@ -46,8 +46,12 @@ runs:
   - name: Generate PR title
     shell: bash
     id: pr-title
+    env:
+      REPO_NAME: ${{ github.event.repository.name }}
+      COMMIT_MESSAGE: ${{ github.event.head_commit.message || github.event.release.tag_name }}
+      ACTOR_LOGIN: ${{ github.actor.login }}
     run: |
-      printf -v RAW_MESSAGE "Repo %s published %s by %s" "${{ github.event.repository.name }}" "${{ github.event.head_commit.message || github.event.release.tag_name }}" "${{ github.actor.login }}"
+      printf -v RAW_MESSAGE "Repo %s published %s by %s" "$REPO_NAME" "$COMMIT_MESSAGE" "$ACTOR_LOGIN"
       # Replace newlines with spaces to ensure valid GitHub Actions output format
       CLEAN_MESSAGE=$(echo "$RAW_MESSAGE" | tr '\n' ' ' | tr -s ' ')
       if [ ${#CLEAN_MESSAGE} -gt 256 ]; then
