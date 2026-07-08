@@ -29,6 +29,9 @@ inputs:
   commit-name:
     description: 'Name to use for the commit'
     required: true
+  pr-title:
+    description: 'Custom PR title. When provided, overrides the auto-generated title that would otherwise include the original commit message. Useful for preventing Linear issue IDs from leaking into gitops PR titles.'
+    required: false
   token:
     required: false
     description: 'GitHub AuthToken for PR'
@@ -50,15 +53,22 @@ runs:
       REPO_NAME: ${{ github.event.repository.name }}
       COMMIT_MESSAGE: ${{ github.event.head_commit.message || github.event.release.tag_name }}
       ACTOR_LOGIN: ${{ github.actor.login }}
+      CUSTOM_TITLE: ${{ inputs.pr-title || '' }}
     run: |
-      printf -v RAW_MESSAGE "Repo %s published %s by %s" "$REPO_NAME" "$COMMIT_MESSAGE" "$ACTOR_LOGIN"
-      # Replace newlines with spaces to ensure valid GitHub Actions output format
-      CLEAN_MESSAGE=$(echo "$RAW_MESSAGE" | tr '\n' ' ' | tr -s ' ')
-      if [ ${#CLEAN_MESSAGE} -gt 256 ]; then
-        TRIMMED_MESSAGE="${CLEAN_MESSAGE:0:253}..."
-        echo "title=$TRIMMED_MESSAGE" >> $GITHUB_OUTPUT
+      if [ -n "$CUSTOM_TITLE" ]; then
+        echo "message=$CUSTOM_TITLE" >> "$GITHUB_OUTPUT"
+        echo "title=$CUSTOM_TITLE" >> "$GITHUB_OUTPUT"
       else
-        echo "title=$CLEAN_MESSAGE" >> $GITHUB_OUTPUT
+        printf -v RAW_MESSAGE "Repo %s published %s by %s" "$REPO_NAME" "$COMMIT_MESSAGE" "$ACTOR_LOGIN"
+        # Replace newlines with spaces to ensure valid GitHub Actions output format
+        CLEAN_MESSAGE=$(echo "$RAW_MESSAGE" | tr '\n' ' ' | tr -s ' ')
+        if [ ${#CLEAN_MESSAGE} -gt 256 ]; then
+          TRIMMED_MESSAGE="${CLEAN_MESSAGE:0:253}..."
+          echo "message=$TRIMMED_MESSAGE" >> "$GITHUB_OUTPUT"
+        else
+          echo "message=$CLEAN_MESSAGE" >> "$GITHUB_OUTPUT"
+        fi
+        echo "title=" >> "$GITHUB_OUTPUT"
       fi
   - uses: fjogeleit/yaml-update-action@v0.16.0
     with:
@@ -69,7 +79,8 @@ runs:
       commitUserName: ${{ inputs.commit-name }}
       createPR: true 
       format: YAML
-      message: ${{ steps.pr-title.outputs.title }}
+      message: ${{ steps.pr-title.outputs.message }}
+      title: ${{ steps.pr-title.outputs.title }}
       workDir: gitops
       changes: ${{ inputs.changes-by-file }}
       valueFile: ${{ inputs.valueFile }}

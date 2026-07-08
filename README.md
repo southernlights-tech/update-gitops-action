@@ -65,6 +65,7 @@ steps:
 | `valueFile` | Path to a single YAML file to update | No | |
 | `propertyPath` | Property path within the YAML file (dot notation) | No | |
 | `value` | New value to set for the property | No | |
+| `pr-title` | Custom PR title. Overrides the auto-generated title (which includes the commit message). Useful for keeping PR titles clean and preventing Linear issue IDs from leaking. | No | |
 | `ssh-key` | SSH private key for repository access | No | |
 | `token` | GitHub token for creating pull requests | No | |
 
@@ -83,10 +84,9 @@ Use `changes-by-file` with a JSON object to update multiple properties across mu
 1. **Repository Checkout**: Checks out the specified GitOps repository
 2. **Branch Creation**: Creates a new branch named `gitops-{SHA}` from the target branch
 3. **File Updates**: Updates the specified YAML files with new values
-4. **Pull Request**: Creates a PR with an auto-generated title including:
-   - Source repository name
-   - Commit message or release tag
-   - Author username
+4. **Pull Request**: Creates a PR. The title is either:
+   - Your custom `pr-title` input (if provided), or
+   - Auto-generated as `Merge: Repo {name} published {commit message} by {actor}` (default)
 
 ## Examples
 
