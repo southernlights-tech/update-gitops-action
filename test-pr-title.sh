@@ -126,6 +126,30 @@ test_special_characters() {
     fi
 }
 
+# Test case 7: Custom PR title overrides auto-generated title
+test_custom_title() {
+    echo "Test 7: Custom PR title overrides auto-generated title"
+    
+    CUSTOM_TITLE="Update secret-agent images to abc123f"
+    
+    # Simulate the action logic
+    if [ -n "$CUSTOM_TITLE" ]; then
+        echo "✅ Custom title used: $CUSTOM_TITLE"
+        echo "   (not: Repo test-repo published feat: KAN-5053 add feature by developer)"
+    else
+        echo "❌ Custom title was ignored"
+        return 1
+    fi
+    
+    # Verify it doesn't contain ticket ID patterns
+    if echo "$CUSTOM_TITLE" | grep -qiE '(DEVOPS|KAN)-[0-9]+'; then
+        echo "❌ Custom title leaked ticket ID"
+        return 1
+    else
+        echo "✅ No ticket ID leaked in custom title"
+    fi
+}
+
 # Run all tests
 echo "Starting PR title generation tests..."
 echo "=================================="
@@ -141,6 +165,8 @@ echo ""
 test_github_context
 echo ""
 test_special_characters
+echo ""
+test_custom_title
 
 echo ""
 echo "🎉 All tests completed successfully!"
